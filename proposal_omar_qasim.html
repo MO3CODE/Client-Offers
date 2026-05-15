@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عرض سعر — عمر قاسم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1E3D;
+    --navy-mid: #152D55;
+    --blue: #1A5CB0;
+    --blue-light: #2E7DE0;
+    --accent: #E8B84B;
+    --accent-light: #F5D380;
+    --white: #FFFFFF;
+    --off-white: #F7F8FC;
+    --text-muted: #8A96A8;
+    --border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(30,90,180,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(232,184,75,0.12) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3.5rem;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .logo-area .tagline {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .logo-area h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .logo-area h1 span {
+    color: var(--accent);
+  }
+
+  .date-badge {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 18px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .date-badge .day {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .date-badge .month {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Client section */
+  .client-section {
+    margin-bottom: 3rem;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .client-name {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  .client-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent) 0%, rgba(232,184,75,0.3) 40%, transparent 100%);
+    margin: 2rem 0;
+  }
+
+  /* Features grid */
+  .features-section {
+    margin-bottom: 3rem;
+    animation: fadeDown 0.7s 0.2s ease both;
+  }
+
+  .features-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .features-header h2 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .features-header .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 16px;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(232,184,75,0.3);
+    transform: translateY(-2px);
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(26,92,176,0.3);
+    border: 1px solid rgba(46,125,224,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .feat-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .feat-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Gift card - special */
+  .gift-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(232,184,75,0.12) 0%, rgba(232,184,75,0.05) 100%);
+    border: 1px solid rgba(232,184,75,0.4);
+    border-radius: 14px;
+    padding: 22px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,184,75,0); }
+    50% { box-shadow: 0 0 24px 0 rgba(232,184,75,0.12); }
+  }
+
+  .gift-card::after {
+    content: 'هدية';
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--navy);
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .gift-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(232,184,75,0.2);
+    border: 1px solid rgba(232,184,75,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .gift-content .gift-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .gift-content .gift-sub {
+    font-size: 12px;
+    color: rgba(232,184,75,0.7);
+    line-height: 1.5;
+  }
+
+  .gift-value {
+    margin-right: auto;
+    text-align: center;
+    padding: 10px 16px;
+    background: rgba(232,184,75,0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(232,184,75,0.2);
+  }
+
+  .gift-value .val-label {
+    font-size: 10px;
+    color: rgba(232,184,75,0.6);
+    margin-bottom: 2px;
+  }
+
+  .gift-value .val-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .gift-value .val-free {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Pricing */
+  .pricing-section {
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.7s 0.3s ease both;
+  }
+
+  .pricing-card {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--navy-mid) 100%);
+    border: 1px solid rgba(46,125,224,0.4);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .price-main .price-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .price-main .price-value {
+    font-size: 54px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .price-main .price-currency {
+    font-size: 20px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 400;
+    margin-right: 6px;
+  }
+
+  .price-main .price-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+  }
+
+  .price-compare {
+    text-align: center;
+  }
+
+  .compare-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 6px;
+  }
+
+  .compare-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+    margin-bottom: 8px;
+  }
+
+  .saving-badge {
+    background: rgba(232,184,75,0.2);
+    border: 1px solid rgba(232,184,75,0.4);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+  }
+
+  /* Terms */
+  .terms-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.7s 0.4s ease both;
+  }
+
+  .term-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .term-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .term-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .term-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    animation: fadeDown 0.7s 0.5s ease both;
+  }
+
+  .validity {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .validity span {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .signature {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: left;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; color: #111; }
+    body::before, .grid-bg { display: none; }
+    .feature-card, .gift-card, .pricing-card, .term-card {
+      border: 1px solid #ddd !important;
+      background: #f9f9f9 !important;
+    }
+    .client-name, .price-main .price-value { color: #111 !important; }
+    .feat-name, .feat-desc, .gift-title { color: #333 !important; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 2rem 1rem; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .terms-section { grid-template-columns: 1fr; }
+    .pricing-card { flex-direction: column; gap: 1.5rem; text-align: center; }
+    .price-main .price-value { font-size: 42px; }
+    .client-name { font-size: 32px; }
+    .gift-card { flex-direction: column; }
+    .gift-value { margin-right: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="tagline">عرض سعر</div>
+      <h1>منصة رقمية <span>متكاملة</span></h1>
+    </div>
+    <div class="date-badge">
+      <div class="day">15</div>
+      <div class="month">مايو 2026</div>
+    </div>
+  </div>
+
+  <!-- Client -->
+  <div class="client-section">
+    <div class="section-label">مقدَّم إلى</div>
+    <div class="client-name">عمر قاسم</div>
+    <div class="client-sub">تطوير منصة ويب احترافية مخصصة — بناء كامل من الصفر</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Features -->
+  <div class="features-section">
+    <div class="features-header">
+      <div class="section-label" style="margin:0">ما يشمله المشروع</div>
+      <div class="line"></div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feat-icon">🖥️</div>
+        <div class="feat-name">الواجهات الأمامية</div>
+        <div class="feat-desc">تصميم responsive احترافي لجميع الأجهزة</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">⚙️</div>
+        <div class="feat-name">لوحة تحكم خاصة</div>
+        <div class="feat-desc">إدارة كاملة ومرنة للمنصة</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">✉️</div>
+        <div class="feat-name">فورم التواصل</div>
+        <div class="feat-desc">مع إشعارات بريد إلكتروني فورية</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🗄️</div>
+        <div class="feat-name">قاعدة البيانات</div>
+        <div class="feat-desc">حفظ وإدارة آمنة ومنظمة</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">📰</div>
+        <div class="feat-name">نظام المقالات</div>
+        <div class="feat-desc">كتابة ونشر وأرشفة المحتوى</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">✏️</div>
+        <div class="feat-name">محتوى قابل للتعديل</div>
+        <div class="feat-desc">جميع واجهات المنصة بالكامل</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-name">أمان عالي</div>
+        <div class="feat-desc">بناء كامل من الصفر بمعايير حماية متقدمة</div>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">👥</div>
+        <div class="feat-name">نظام المشرفين</div>
+        <div class="feat-desc">حسابات إدارية وصلاحيات متعددة</div>
+      </div>
+
+      <!-- Gift -->
+      <div class="gift-card">
+        <div class="gift-icon">🎁</div>
+        <div class="gift-content">
+          <div class="gift-title">محادثة ذكاء اصطناعي مخصصة لعملائك</div>
+          <div class="gift-sub">مدمجة بالكامل — لن تكلفك شيئاً الآن ولا مستقبلاً</div>
+        </div>
+        <div class="gift-value">
+          <div class="val-label">قيمتها</div>
+          <div class="val-price">300$</div>
+          <div class="val-free">مجاناً 🎉</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="pricing-section">
+    <div class="pricing-card">
+      <div class="price-main">
+        <div class="price-label">إجمالي الاستثمار</div>
+        <div class="price-value">
+          <span class="price-currency">$</span>650
+        </div>
+        <div class="price-note">شامل جميع الخدمات + هدية الـ AI chatbot</div>
+      </div>
+      <div class="price-compare">
+        <div class="compare-label">السعر السوقي المعتاد</div>
+        <div class="compare-value">$1,800</div>
+        <div class="saving-badge">توفير أكثر من 64%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms -->
+  <div class="terms-section">
+    <div class="term-card">
+      <span class="term-icon">📅</span>
+      <div class="term-label">مدة التطوير</div>
+      <div class="term-value">3–5 أسابيع</div>
+    </div>
+    <div class="term-card">
+      <span class="term-icon">🛠️</span>
+      <div class="term-label">الدعم الفني</div>
+      <div class="term-value">شهرين مجاناً</div>
+    </div>
+    <div class="term-card">
+      <span class="term-icon">💳</span>
+      <div class="term-label">طريقة الدفع</div>
+      <div class="term-value">50% مقدم · 50% تسليم</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="validity">العرض ساري لمدة <span>14 يوماً</span></div>
+    <div class="signature"><a href="https://www.linkedin.com/in/mo3d/" target="_blank" style="color: var(--accent); text-decoration: none;">Mohammed Alsalahi ↗</a></div>
+  </div>
+
+</div>
+</body>
+</html>
